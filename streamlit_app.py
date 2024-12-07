@@ -64,6 +64,16 @@ def extract_product_data(url):
         st.error(f"Failed to fetch URL {url}: {e}")
         return None
 
+def calculate_csat(ratings):
+    """Calculate CSAT score based on positive ratings."""
+    if not ratings:
+        return 0  # Return 0 if there are no ratings
+
+    positive_ratings = sum(1 for r in ratings if r >= 4)  # Assuming 4 and 5 are positive
+    total_ratings = len(ratings)
+    csat_score = (positive_ratings / total_ratings) * 100
+    return csat_score
+
 class ReviewAnalyzer:
     def __init__(self):
         self.client = ChatOpenAI(openai_api_key=st.secrets["OpenAI_Key"], model_name="gpt-3.5-turbo")
@@ -97,7 +107,10 @@ class ReviewAnalyzer:
     def handle_overall_reviews(self, checked_data):
         avg_rating = np.mean(checked_data['adjusted_rating'])
         st.write(f"Overall Average Rating: {avg_rating:.2f}")
-
+        
+        csat_score = calculate_csat(checked_data['ratings'])
+        st.write(f"Customer Satisfaction (CSAT) Score: {csat_score:.2f}%")
+        
         all_reviews = " ".join(checked_data['reviews'])
         summary_prompt = ChatPromptTemplate.from_template(
             "Summarize the following product reviews in about 100 words. "
