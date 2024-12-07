@@ -175,8 +175,3 @@ def main():
         data = extract_product_data(url)
 
         if data:
-            analyzer = ReviewAnalyzer()
-            analyzer.analyze_reviews(data)
-
-if __name__ == "__main__":
-    main()
